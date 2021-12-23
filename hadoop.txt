@@ -1,0 +1,89 @@
+Case Study1: There exists only two datanodes (DN1, DN2)
+Dataset: transactions.csv
+txnid,txndate,custid,amt,category,subcategory,city,state,txntype
+===========================================================================================================DN1
+00000356,05-20-2011,4004931,186.81,Indoor Games,Darts,New Orleans,Louisiana,credit
+00000357,11-26-2011,4009945,141.21,Team Sports,Field Hockey,Pasadena,California,credit
+00000358,04-15-2011,4006777,022.72,Team Sports,Basketball,Paterson,New Jersey,cash
+===========================================================================================================DN2
+from Prashant Nair to All Participants:
+00000359,12-20-2011,4008801,036.41,Exercise & Fitness,Medicine Balls,Westminster,Colorado,cash
+00000360,02-14-2011,4005419,173.06,Water Sports,Swimming,Lincoln,Nebraska,credit
+00000361,03-29-2011,4001418,034.61,Water Sports,Gymnastics Rings,Irving,Texas,cash
+===============================================================================================================
+MR program to find revenue generated based on category
+Expected Output
+Indoor Games, 186.81
+Team Sports, 163.93
+Exercise & Fitness, 036.41
+Water Sports, 207.67
+Input
+
+DN1
+(1,"00000356,05-20-2011,4004931,186.81,Indoor Games,Darts,New Orleans,Louisiana,credit")
+(2,00000357,11-26-2011,4009945,141.21,Team Sports,Field Hockey,Pasadena,California,credit)
+(3,00000358,04-15-2011,4006777,022.72,Team Sports,Basketball,Paterson,New Jersey,cash)
+
+DN2
+(1,00000359,12-20-2011,4008801,036.41,Exercise & Fitness,Medicine Balls,Westminster,Colorado,cash)
+(2,00000360,02-14-2011,4005419,173.06,Water Sports,Swimming,Lincoln,Nebraska,credit)
+(3,00000361,03-29-2011,4001418,034.61,Water Sports,Gymnastics Rings,Irving,Texas,cash)
+
+Mapper pahase
+DN1									DN2
+(Indoor Games,186.81)							(Exercise & Fitness,036.4)
+(Team Sports,141.21)							(Water Sports,173.06)
+(Team Sports,022.72)							(Water Sports,034.61)
+
+sort/shuffle
+sort
+DN1									DN2
+(Indoor Games,186.81)							(Exercise & Fitness,036.4)
+(Team Sports,141.21)							(Water Sports,173.06)
+(Team Sports,022.72)							(Water Sports,034.61)					
+					
+
+shuffle
+DN1				DN2
+
+
+(Indoor Games,186.81)		(Exercise & Fitness,036.4)
+(Team Sports,141.21,022.72)	(Water Sports,173.06,034.61)
+	 
+			
+reducer	
+(Indoor Games,186.81)		(Exercise & Fitness,036.4)
+(Team Sports,163.93)		(Water Sports,207.67)
+	 
+
+cluster level
+(Indoor Games,186.81)		
+(Exercise & Fitness,036.4)
+(Team Sports,163.93)		
+(Water Sports,207.67)
+
+Output
+
+Indoor Games	186.81		
+Exercise & Fitness	036.4
+Team Sports	163.93		
+Water Sports	207.67
+
+hdfs dfs mkdir 
+
+
+Lab to Execute a MR code 
+=========================
+1. Ensure the code is deployed in JAR file
+2. Upload the input data
+    hdfs dfs -mkdir tigeranalytics/input
+    hdfs dfs -copyFromLocal dataWordCount.txt tigeranalytics/input/dataWordCount.txt
+3. Upload the jar file using FTP in remote machine
+4. Perform the following command to initiate MR
+yarn jar hadoop-mapreduce-examples-3.0.0.jar wordcount tigeranalytics/input/dataWordCount.txt tigeranalytics/outputWC
+5. Check the output
+hdfs dfs -cat tigeranalytics/outputWC/part-r-*
+
+yarn jar hadoop-mapreduce-examples-3.0.0.jar--- to check which all functions are available
+
+connect to mysql - mysql -u prashantnair2050gmail -pprashantnair2050gmailoufpa -h sqoopdb.slbdh.cloudlabs.com

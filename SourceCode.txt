@@ -1,0 +1,28 @@
+-----------------------------------------------------------
+Code to be Executed in SSMS (SQL Server Management Studio)
+-----------------------------------------------------------
+
+To create a table with specified column names:-
+------------------------------------------------
+
+CREATE TABLE [autodata]
+      (
+    	  [MAKE] [varchar](200) ,
+	  [FUELTYPE] [varchar](200) ,
+	  [ASPIRE] [varchar](200) ,
+	  [DOORS] [varchar](200) ,
+	  [BODY] [varchar](100) ,
+	  [DRIVE] [varchar](200) ,
+	  [CYLINDERS] [varchar](200) ,
+	  [HP] [int],
+	  [RPM] [INT],
+	  [MPG-CITY] [int],
+	  [MPG-HWY] [int],
+	  [PRICE] [int]
+	
+      )
+
+To view the contents of the table:-
+------------------------------------
+ 
+select * from [autodata];

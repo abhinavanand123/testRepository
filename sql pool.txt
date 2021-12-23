@@ -1,0 +1,57 @@
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'P@ssw0rd@123';
+
+CREATE DATABASE SCOPED CREDENTIAL AzureStorageCredential
+WITH
+  IDENTITY = 'dataforbigdata3457',
+  SECRET = 'PEAA9fyMTZllBEys1hOIgoNNEdKgHKDT2chZH0jHHuLM1aSj2FNELaOG5dHApnLlOaRJ3vpyohh9yvQo+cAf3w==';
+
+CREATE EXTERNAL DATA SOURCE txn_data
+WITH (    LOCATION   = 'abfss://data3@dataforbigdata3457.dfs.core.windows.net',
+          CREDENTIAL = AzureStorageCredential,
+          TYPE = HADOOP
+)
+
+CREATE EXTERNAL FILE FORMAT TextFileFormat WITH (  
+      FORMAT_TYPE = DELIMITEDTEXT,  
+    FORMAT_OPTIONS (  
+        FIELD_TERMINATOR = ',',
+        FIRST_ROW = 1))
+
+DROP EXTERNAL TABLE [txndata]
+
+CREATE EXTERNAL TABLE [txndata]
+(
+    [txnid] [int] ,
+	[txndate] [varchar](100) ,
+	[custid] [int] ,
+	[amount] [float] ,
+	[category] [varchar](100) ,
+	[subcategory] [varchar](100) ,
+	[city] [varchar](100) ,
+	[state] [varchar](200) ,
+	[txntype] [varchar](1000) 
+	 
+)
+WITH (
+ LOCATION = 'txndataset/txnsSmall',
+    DATA_SOURCE = txn_data,  
+    FILE_FORMAT = TextFileFormat
+)
+
+SELECT * FROM txndata
+
+SELECT [category],SUM([amount]) AS [Revenue] FROM [txndata] GROUP BY [category] ORDER BY [Revenue]
+
+Find the total number and total sum of transactions done via cash
+
+
+SELECT [txntype],COUNT([txntype]) AS [total_transactions], SUM([amount]) As [total_sum] FROM [txndata] WHERE [txntype]='cash' GROUP BY [txntype] 
+
+Which category of products have the highest selling
+
+SELECT TOP 1 [category],SUM([amount]) AS [total_sum] FROM [txndata] GROUP BY [category] ORDER BY SUM([amount]) DESC
+
+
+
+select TOP 1 [subcategory],count([subcategory]) as [sell_count] from [txndata] where [category] in (select a.category from (select TOP 1 [category],count([category])as sell_count from [txndata] group by [category] order by sell_count desc) as a) 
+group by [subcategory] order by [sell_count]

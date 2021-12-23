@@ -1,0 +1,40 @@
+select subcategory,count(subcategory) as sell_count 
+from ta_prashant.txnsassignment 
+where category in 
+(select a.category from (select category,count(category)as sell_count from ta_prashant.txnsassignment group by category order by sell_count desc limit 1) as a) 
+group by subcategory order by sell_count limit 1;
+
+hbase shell
+create 'hr','employee'
+put 'hr',1,'employee:ename','Prashant'
+put 'hr',1,'employee:esal','4000'
+put 'hr',2,'employee:ename','Arun'
+put 'hr',2,'employee:esal','5000'
+scan 'hr'
+get 'hr',1
+Update:
+put 'hr',1,'employee:esal','5000'
+scan 'hr'
+get 'hr',1
+
+
+
+create external table data5(
+Id int,
+EmployeeName varchar(20),
+JobTitle varchar(20),
+BasePay bigint,
+OvertimePay bigint,     
+OtherPay bigint,
+Benefits varchar(20),  
+TotalPay bigint,
+TotalPayBenefits varchar(20),   
+Year int,
+Notes varchar(20),
+Agency varchar(20),
+Status varchar(20))
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+LOCATION '/user/abhinavanandtigeranalytic/tigeranalytics/salary'
+TBLPROPERTIES ("skip.header.line.count"="1"); #to ignore headers

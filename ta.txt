@@ -1,0 +1,129 @@
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+df = spark.read.load("/user/abhinavanandtigeranalytic/tigeranalytics/dataset_bank.csv",format="csv", sep=";", inferSchema="true", header="true")
+df.printSchema()       
+import pyspark.sql.functions as F
+import re
+df = df.select([F.col(col).alias(re.sub("[^0-9a-zA-Z$]+","",col)) for col in df.columns])
+
+
+
+
+
+	JAVA_HOME = C:\Program Files\Java\jdk1.8.0_221
+	PATH = C:\Program Files\Java\jdk1.8.0_221\bin
+	HADOOP_HOME=C:\apachespark\spark-2.4.7-bin-hadoop2.7
+	SPARK_HOME=C:\apachespark\spark-2.4.7-bin-hadoop2.7
+
+"age;""job""
+
+split_col = pyspark.sql.functions.split(df['age;""job"'], ';')
+df1 = df.withColumn('age', split_col.getItem(0))
+df1 = df.withColumn('job', split_col.getItem(1))
+
+abhinavv.anand@outlook.com
+QserTuseq@123
+
+
+wEru/aMrwug7dT6J/QMYCMGWCZyX/9IaYBZMg3xQmJkLcFzwbbGeYwySsuqxDi10Z8dVdneX2lkdKc6NwP+P1w==
+datademo345
+
+https://aka.ms/ssmsfullsetup
+anand.abhinavv@outlook.com
+Q
+
+
+df.write.save(path('/user/abhinavanandtigeranalytic/tigeranalytics/dataset_bank1.csv'),format = 'csv',delimiter = '|',header = True,nullValue = '\u0000',emptyValue = '\u0000')
+
+df.write.csv(path="/user/abhinavanandtigeranalytic/tigeranalytics/dataset_bank.csv",sep=";",header=True,quoteAll=False,emptyValue="",)
+------------------------------------------------------
+import pyspark.sql.functions as F
+import re
+df2 = df.select([F.regexp_replace(c, '"', "").alias(c) for c in df.columns])
+df2.show(5)
+df2 = df2.select([F.col(col).alias(re.sub("[^0-9a-zA-Z$]+","",col)) for col in df.columns])
+df2.show(5)
+import pyspark
+split_col = pyspark.sql.functions.split(df2['agejob'], ';')
+df2 = df2.withColumn('age', split_col.getItem(0))
+df2 = df2.withColumn('job', split_col.getItem(1))
+df2.show(10)
+
+df3=df2.drop(df2.agejob)
+df3.show(10)
+
+df_final = df2.select("age","job","marital","education","default","balance","housing","loan","contact","day","month","duration","campaign","pdays","previous",
+"poutcome","y")
+-------------------------------
+<! Change Schema of the dfs !>
+-------------------------------
+from pyspark.sql.types import IntegerType,StringType
+final_output=df_final \
+	.withColumn("age",df_final["age"].cast(IntegerType())) \
+	.withColumn("job",df_final["job"].cast(StringType())) \
+	.withColumn("marital",df_final["marital"].cast(StringType())) \
+	.withColumn("education",df_final["education"].cast(StringType())) \
+	.withColumn("default",df_final["default"].cast(StringType())) \
+	.withColumn("balance",df_final["balance"].cast(IntegerType())) \
+	.withColumn("housing",df_final["housing"].cast(StringType())) \
+	.withColumn("loan",df_final["loan"].cast(StringType())) \
+	.withColumn("contact",df_final["contact"].cast(StringType())) \
+	.withColumn("day",df_final["day"].cast(IntegerType())) \
+	.withColumn("month",df_final["month"].cast(StringType())) \
+	.withColumn("duration",df_final["duration"].cast(IntegerType())) \
+	.withColumn("campaign",df_final["campaign"].cast(IntegerType())) \
+	.withColumn("pdays",df_final["pdays"].cast(IntegerType())) \
+	.withColumn("previous",df_final["previous"].cast(IntegerType())) \
+	.withColumn("poutcome",df_final["poutcome"].cast(StringType())) \
+	.withColumn("y",df_final["y"].cast(StringType()))
+
+------------------------------------------------------------------
+
+
+1.)Give marketing success rate (No. of people subscribed / total no. of entries)   
+   Give marketing failure rate
+
+Query--> suc = sqlContext.sql("select (a.sub/b.tot)*100 as success from (select count(*) as sub from bank where  y='yes') a,(select count(*) as tot from bank) b").show()
+	 fail = sqlContext.sql("select (a.not/b.tot)*100 as failure from (select count(*) as not from bank where  y='no') a,(select count(*) as tot from bank) b").show()
+
+2.)Give the maximum, mean, and minimum age of the average targeted customer
+
+--> final_output.agg(max("age"),min("age"), avg("age")).show()
+
+3.)Check the quality of customers by checking average balance, median balance of customers
+
+-->sqlContext.sql("SELECT avg(balance) as average, percentile_approx(balance, 0.5) as median  FROM bank").show()
+
+4.)Check if age matters in marketing subscription for deposit
+
+age = sqlContext.sql("select age, count(*) as number from bank where  y ='no' group by age order by number desc ").show()
+
+5.)Check if marital status mattered for a subscription to deposit
+
+marital = sqlContext.sql("select marital, count(*) as number from bank where  y ='no' group by marital order by number desc ").show()
+
+6.)Check if age and marital status together mattered for a subscription to deposit scheme
+
+age_marital = sqlContext.sql("select age, marital, count(*) as number from bank where y='no' group by age,marital order by number desc ").show()
+
+7.)Do feature engineering for the bank and find the right age effect on the campaign.
+
+from pyspark.sql.functions import col
+bank_f = final_output.filter(col("y") == "yes")
+age_cat = bank_f.withColumn("age_cat", when(col("age") < 25, "young").otherwise(when(col("age") > 60, "old").otherwise("mid")))
+result = age_cat.groupBy("age_cat").count()
+result.show()
+resultWithMarital= age_cat.groupBy("age_cat", "marital").count().sort(col("count").desc())
+resultWithMarital.show()
+
+
+
+
+
+
+
+
+
+
+
+
