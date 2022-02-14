@@ -7,6 +7,7 @@ from pyspark.sql import SparkSession
 import sys
 import boto3
 import pyspark.sql.utils
+import requests
 
 
 # Initializing Spark
